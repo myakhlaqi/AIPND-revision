@@ -18,6 +18,7 @@
 ##
 # Imports python modules
 from os import listdir
+from collections import defaultdict
 
 # TODO 2: Define get_pet_labels function below please be certain to replace None
 #       in the return statement with results_dic dictionary that you create 
@@ -40,6 +41,11 @@ def get_pet_labels(image_dir):
       List. The list contains for following item:
          index 0 = pet image label (string)
     """
+    pet_lable_dict = defaultdict(list)
+    for img in listdir(image_dir):
+      pet_lable_dict[img]=[ " ".join(w for w in img.lower().split("_") if w.isalpha() ) ]
+    
+    
     # Replace None with the results_dic dictionary that you created with this
     # function
-    return None
+    return pet_lable_dict

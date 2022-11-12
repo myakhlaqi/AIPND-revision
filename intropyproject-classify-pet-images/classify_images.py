@@ -65,4 +65,11 @@ def classify_images(images_dir, results_dic, model):
      Returns:
            None - results_dic is mutable data type so no return needed.         
     """
+    for img_name in results_dic:
+        image_classification = classifier(f"pet_images/{img_name}", model).lower().split(",")
+
+        if results_dic[img_name][0] in image_classification:
+          results_dic[img_name].extend([",".join(image_classification),1])
+        else:
+          results_dic[img_name].extend([",".join(image_classification),0])
     None 
