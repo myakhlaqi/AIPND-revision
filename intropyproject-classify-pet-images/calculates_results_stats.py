@@ -1,29 +1,30 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# */AIPND-revision/intropyproject-classify-pet-images/calculates_results_stats.py
-#                                                                             
+# */AIPND-revision/intropyproject-classify-pet-images/calculates_results_stats_hints.py
+#
 # PROGRAMMER:
-# DATE CREATED:                                  
-# REVISED DATE: 
-# PURPOSE: Create a function calculates_results_stats that calculates the 
-#          statistics of the results of the programrun using the classifier's model 
-#          architecture to classify the images. This function will use the 
-#          results in the results dictionary to calculate these statistics. 
+# DATE CREATED:
+# REVISED DATE:
+# PURPOSE: This is a *hints* file to help guide students in creating the
+#          function calculates_results_stats that calculates the statistics
+#          of the results of the programrun using the classifier's model
+#          architecture to classify the images. This function will use the
+#          results in the results dictionary to calculate these statistics.
 #          This function will then put the results statistics in a dictionary
 #          (results_stats_dic) that's created and returned by this function.
-#          This will allow the user of the program to determine the 'best' 
+#          This will allow the user of the program to determine the 'best'
 #          model for classifying the images. The statistics that are calculated
 #          will be counts and percentages. Please see "Intro to Python - Project
-#          classifying Images - xx Calculating Results" for details on the 
-#          how to calculate the counts and percentages for this function.    
+#          classifying Images - xx Calculating Results" for details on the
+#          how to calculate the counts and percentages for this function.
 #         This function inputs:
-#            -The results dictionary as results_dic within calculates_results_stats 
+#            -The results dictionary as results_dic within calculates_results_stats
 #             function and results for the function call within main.
 #         This function creates and returns the Results Statistics Dictionary -
-#          results_stats_dic. This dictionary contains the results statistics 
-#          (either a percentage or a count) where the key is the statistic's 
-#           name (starting with 'pct' for percentage or 'n' for count) and value 
-#          is the statistic's value.  This dictionary should contain the 
+#          results_stats_dic. This dictionary contains the results statistics
+#          (either a percentage or a count) where the key is the statistic's
+#           name (starting with 'pct' for percentage or 'n' for count) and value
+#          is the statistic's value.  This dictionary should contain the
 #          following keys:
 #            n_images - number of images
 #            n_dogs_img - number of dog images
@@ -38,10 +39,14 @@
 #            pct_correct_notdogs - percentage of correctly classified NON-dogs
 #
 ##
-# TODO 5: Define calculates_results_stats function below, please be certain to replace None
-#       in the return statement with the results_stats_dic dictionary that you create 
-#       with this function
-# 
+# TODO 5: EDIT and ADD code BELOW to do the following that's stated in the
+#       comments below that start with "TODO: 5" for the calculates_results_stats
+#       function. Please be certain to replace None in the return statement with
+#       the results_stats_dic dictionary that you create with this function
+#
+from collections import defaultdict
+
+
 def calculates_results_stats(results_dic):
     """
     Calculates statistics of the results of the program run using classifier's model 
@@ -67,7 +72,34 @@ def calculates_results_stats(results_dic):
                      and the value is the statistic's value. See comments above
                      and the classroom Item XX Calculating Results for details
                      on how to calculate the counts and statistics.
-    """        
-    # Replace None with the results_stats_dic dictionary that you created with 
-    # this function 
-    return None
+    """
+    # Creates empty dictionary for results_stats_dic
+    results_stats_dic = defaultdict()
+
+    results_stats_dic['n_dogs_img'] = sum(
+        results_dic[k][3] == 1 for k in results_dic)
+    results_stats_dic['n_match'] = sum(
+        results_dic[k][2] == 1 for k in results_dic)
+    results_stats_dic['n_correct_dogs'] = sum(
+        results_dic[k][3] == results_dic[k][4] == 1 for k in results_dic)
+    results_stats_dic['n_correct_notdogs'] = sum(
+        results_dic[k][3] == results_dic[k][4] == 0 for k in results_dic)
+    results_stats_dic['n_correct_breed'] = sum(
+        results_dic[k][3] == results_dic[k][2] == 1 for k in results_dic)
+    results_stats_dic['n_images'] = len(results_dic)
+    results_stats_dic['n_notdogs_img'] = (
+        results_stats_dic['n_images'] - results_stats_dic['n_dogs_img'])
+
+    results_stats_dic['pct_match'] = results_stats_dic['n_images'] and (
+        results_stats_dic['n_match']/results_stats_dic['n_images'])*100.0 or 0
+    results_stats_dic['pct_correct_dogs'] = results_stats_dic['n_dogs_img'] and (
+        results_stats_dic['n_correct_dogs']/results_stats_dic['n_dogs_img'])*100.0 or 0
+    results_stats_dic['pct_correct_breed'] = results_stats_dic['n_dogs_img'] and (
+        results_stats_dic['n_correct_breed']/results_stats_dic['n_dogs_img'])*100.0 or 0
+
+    # Calculates % correct not-a-dog images
+    # Uses conditional statement for when no 'not a dog' images were submitted
+    results_stats_dic['pct_correct_notdogs'] = results_stats_dic['n_notdogs_img'] and (
+        results_stats_dic['n_correct_notdogs'] / results_stats_dic['n_notdogs_img'])*100.0 or 0
+
+    return results_stats_dic
