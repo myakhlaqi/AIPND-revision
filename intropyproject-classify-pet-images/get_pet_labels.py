@@ -43,7 +43,7 @@ def get_pet_labels(image_dir):
     """
     pet_lable_dict = defaultdict(list)
     for img in listdir(image_dir):
-      pet_lable_dict[img]=[ " ".join(w for w in img.lower().split("_") if w.isalpha() ) ]
+      pet_lable_dict[img]=[ " ".join(w.strip() for w in img.lower().split("_") if w.isalpha() ) ]
     
     
     # Replace None with the results_dic dictionary that you created with this
