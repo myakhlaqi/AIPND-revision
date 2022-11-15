@@ -3,7 +3,7 @@
 # */AIPND-revision/intropyproject-classify-pet-images/print_results_hints.py
 #
 # PROGRAMMER: Mohammad Yahya Akhlaqi
-# DATE CREATED: 11/11/2022                                 
+# DATE CREATED: 11/11/2022
 # REVISED DATE: 11/15/2022
 # PURPOSE: This is a *hints* file to help guide students in creating the
 #          function print_results that prints the results statistics from the
@@ -59,61 +59,140 @@ def print_results(results_dic, results_stats_dic, model,
            None - simply printing results.
     """
     # Prints summary statistics over the run
-    print("\n\n*** Results Summary for CNN Model Architecture", model.upper(),
-          "***")
-    print("{:20}: {:3d}".format('N Images', results_stats_dic['n_images']))
-    print("{:20}: {:3d}".format('N Dog Images',
-          results_stats_dic['n_dogs_img']))
-    print("{:20}: {:3d}".format('N Not-Dog Images',
-          results_stats_dic['n_notdogs_img']))
+    
+# Printing a table of the results_stats_dic dictionary for the number of images, number of dog images,
+# and number of not dog images.
+    print_table( f"Results Summary for CNN Model Architecture, {model.upper()}",
+                ["N Images","N Dog Images","N Not-Dog Images"],
+                [[results_stats_dic['n_images'],results_stats_dic['n_dogs_img'],results_stats_dic['n_notdogs_img']]],
+                [20],False)
+    
+#     print("\n\n*** Results Summary for CNN Model Architecture", model.upper(),
+#           "***")
+#     print("{:20}: {:3d}".format('N Images', results_stats_dic['n_images']))
+#     print("{:20}: {:3d}".format('N Dog Images',
+#           results_stats_dic['n_dogs_img']))
+#     print("{:20}: {:3d}".format('N Not-Dog Images',
+#           results_stats_dic['n_notdogs_img']))
 
-    # Prints summary statistics (percentages) on Model Run
-    print("\n\n*** Prints summary statistics (percentages) on CNN model ", model.upper(),
-          "***")
+    # Prints summary statistics (percentages) on Model Run in a tabular style in console
+    print_table(f"Prints summary statistics (percentages) on CNN model {model.upper()}",
+                ["% " + " ".join(key.split('_')[1:]) for key in results_stats_dic if key.startswith('p')],
+                [[results_stats_dic[k] for k in results_stats_dic if k.startswith('p')]],
+                [20],
+                False)
 
-# Printing the results_stats_dic dictionary for percentages statistics
-    for key in results_stats_dic:
-        if key.startswith('p'):
-            print("{:20}: {:.2f}%".format(key, results_stats_dic[key]))
+
+#     print("\n\n*** Prints summary statistics (percentages) on CNN model ", model.upper(),
+#           "***")
+
+# # Printing the results_stats_dic dictionary for percentages statistics
+#     for key in results_stats_dic:
+#         if key.startswith('p'):
+#             print("{:20}: {:.2f}%".format(key, results_stats_dic[key]))
 
     # IF print_incorrect_dogs == True AND there were images incorrectly
     # classified as dogs or vice versa - print out these cases
     if (print_incorrect_dogs and
-                ((results_stats_dic['n_correct_dogs'] + results_stats_dic['n_correct_notdogs'])
-                 != results_stats_dic['n_images'])
+            ((results_stats_dic['n_correct_dogs'] + results_stats_dic['n_correct_notdogs'])
+             != results_stats_dic['n_images'])
             ):
-        print("\nINCORRECT Dog/NOT Dog Assignments:")
+# Printing a table of the results_dic dictionary for the images that are incorrectly classified as
+# dogs or not dogs.
+        print_table(f"INCORRECT Dog/NOT Dog Assignments: 1 is DOG and 0 IS NOT DOG",
+                    ["Image", "Real","Classified"], 
+                    [ [results_dic[key][0] ,results_dic[key][3], results_dic[key][4] ] for key in results_dic 
+                     if  results_dic[key][3] ^ results_dic[key][4] ],
+                    [30,15,15])
+            
+        # print("\nINCORRECT Dog/NOT Dog Assignments:")
 
-        # process through results dict, printing incorrectly classified dogs
-        for key in results_dic:
-            # Pet Image Label is a Dog - Classified as NOT-A-DOG -OR-
-            # Pet Image Label is NOT-a-Dog - Classified as a-DOG
-            if results_dic[key][3] and not results_dic[key][4]:
-                print(
-                    "Pet {:20s} is a Dog - Classified as NOT-A-DOG".format(results_dic[key][0]))
-            if not results_dic[key][3] and results_dic[key][4]:
-                print(
-                    "Pet {:20s} is not a Dog - Classified as A-DOG".format(results_dic[key][0]))
+        # # process through results dict, printing incorrectly classified dogs
+        # for key in results_dic:
+        #     # Pet Image Label is a Dog - Classified as NOT-A-DOG -OR-
+        #     # Pet Image Label is NOT-a-Dog - Classified as a-DOG
+        #     if results_dic[key][3] and not results_dic[key][4]:
+        #         print(
+        #             "Pet {:20s} is a Dog - Classified as NOT-A-DOG".format(results_dic[key][0]))
+        #     if not results_dic[key][3] and results_dic[key][4]:
+        #         print(
+        #             "Pet {:20s} is not a Dog - Classified as A-DOG".format(results_dic[key][0]))
 
     # IF print_incorrect_breed == True AND there were dogs whose breeds
     # were incorrectly classified - print out these cases
     if (print_incorrect_breed and
-                (results_stats_dic['n_correct_dogs'] !=
-                 results_stats_dic['n_correct_breed'])
+            (results_stats_dic['n_correct_dogs'] !=
+             results_stats_dic['n_correct_breed'])
             ):
-        
-        n_incorrect_breed = results_stats_dic['n_correct_dogs'] - results_stats_dic['n_correct_breed']
+
+        n_incorrect_breed = results_stats_dic['n_correct_dogs'] - \
+            results_stats_dic['n_correct_breed']
+
+        print_table(f"INCORRECT Dog Breed : {n_incorrect_breed}",
+                    ["Real", "Classifier"], 
+                    [[results_dic[key][0], results_dic[key][1]] for key in results_dic 
+                     if sum(results_dic[key][3:]) == 2 and results_dic[key][2] == 0],
+                    [26, 30])
+
         # process through results dict, printing incorrectly classified breeds
-        print(f'\n+{"-" * 27}+{"-" * 31}+')
-        print("|{:^59}|".format(f"INCORRECT Dog Breed : {n_incorrect_breed}"), end="\n")
+        # print(f'\n+{"-" * 27}+{"-" * 31}+')
+        # print("|{:^59}|".format(
+        #     f"INCORRECT Dog Breed : {n_incorrect_breed}"), end="\n")
+        # # print(f'+{"-" * 27}+{"-" * 31}+\n')
+        # print("| {:<26}| {:<30}|".format("Real", "Classifier"), end="\n")
+        # print(f'+{"=" * 27}+{"=" * 31}+')
+        # for key in results_dic:
+        #     # Pet Image Label is-a-Dog, classified as-a-dog but is WRONG breed
+        #     if (sum(results_dic[key][3:]) == 2 and
+        #             results_dic[key][2] == 0):
+        #         print("| {:<26}| {:<30}|".format(results_dic[key][0],
+        #                                          results_dic[key][1]), end="\n")
         # print(f'+{"-" * 27}+{"-" * 31}+\n')
-        print("| {:<26}| {:<30}|".format("Real","Classifier"),end="\n")
-        print(f'+{"=" * 27}+{"=" * 31}+')
-        for key in results_dic:
-            # Pet Image Label is-a-Dog, classified as-a-dog but is WRONG breed
-            if (sum(results_dic[key][3:]) == 2 and
-                    results_dic[key][2] == 0):
-                print("| {:<26}| {:<30}|".format(results_dic[key][0],
-                                                                 results_dic[key][1]),end="\n")
-        print(f'+{"-" * 27}+{"-" * 31}+\n')
+
+def print_table(main_header:str,header2: list[str] , data: list[list],col_width:list[int],row_number:bool=True):
+        """
+        It takes a main header, a list of headers, a table of data, a list of column widths, and a
+        boolean for whether or not to print row numbers
         
+        :param main_header: The title of the table
+        :type main_header: str
+        :param header2: list[str] - The header of the table
+        :type header2: list[str]
+        :param data: list[list]
+        :type data: list[list]
+        :param col_width: list of ints, the width of each column
+        :type col_width: list[int]
+        :param row_number: bool, defaults to True
+        :type row_number: bool (optional)
+        """
+        if len(col_width)<len(data[0]):
+                col_width=[col_width[0]]*len(data[0])
+        else:
+                col_width=col_width[:len(data[0])]
+        if row_number:
+                print("\n+-----+"+"+".join( "-" * x for x in  col_width)+"+")
+                
+                print("|{0:^{1:d}}|".format(main_header,sum(col_width)+len(col_width)+5 ), end="\n")
+                
+                print("| #   |"+"|".join("{0:<{1:d}}".format(" "+item,size) for item,size in zip(header2,col_width) ) + "|")
+
+                print("+=====+"+"+".join( "=" * x for x in  col_width)+"+")
+                i=1
+                for row in data:
+                        print("| {:<4d}|".format(i)+"|".join("{0:<{1:d}s}".format(" "+item,size) for item,size in zip(list(map(str, row)),col_width) ) + "|")
+                        i+=1
+                print("+=====+"+"+".join( "=" * x for x in  col_width)+"+")                
+        else:
+                print("\n+"+"+".join( "-" * x for x in  col_width)+"+")
+                
+                print("|{0:^{1:d}}|".format(main_header,sum(col_width)+len(col_width)-1), end="\n")
+                
+                print("|"+"|".join("{0:<{1:d}}".format(" "+item,size) for item,size in zip(header2,col_width) ) + "|")
+
+                print("+"+"+".join( "=" * x for x in  col_width)+"+")
+                for row in data:
+                        print("|"+"|".join("{0:<{1:d}s}".format(" "+item,size) for item,size in zip(list(map(str, row)),col_width) ) + "|")
+                print("+"+"+".join( "=" * x for x in  col_width)+"+")
+
+
+# print_table("Hello world",["name","score"],[["A",2],["bob",23],["Yamin",34]],[10,10])
