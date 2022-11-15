@@ -59,23 +59,22 @@ def print_results(results_dic, results_stats_dic, model,
            None - simply printing results.
     """
     # Prints summary statistics over the run
-
+    
 # Printing a table of the results_stats_dic dictionary for the number of images, number of dog images,
 # and number of not dog images.
-    print_table(f"Results Summary for CNN Model Architecture, {model.upper()}",
-                ["N Images", "N Dog Images", "N Not-Dog Images"],
-                [[results_stats_dic['n_images'], results_stats_dic['n_dogs_img'],
-                    results_stats_dic['n_notdogs_img']]],
-                [20], False)
+    print_table( f"Results Summary for CNN Model Architecture, {model.upper()}",
+                ["N Images","N Dog Images","N Not-Dog Images"],
+                [[results_stats_dic['n_images'],results_stats_dic['n_dogs_img'],results_stats_dic['n_notdogs_img']]],
+                [20],False)
 
     # Prints summary statistics (percentages) on Model Run in a tabular style in console
     print_table(f"Prints summary statistics (percentages) on CNN model {model.upper()}",
-                ["% " + " ".join(key.split('_')[1:])
-                 for key in results_stats_dic if key.startswith('p')],
-                [[results_stats_dic[k]
-                    for k in results_stats_dic if k.startswith('p')]],
+                ["% " + " ".join(key.split('_')[1:]) for key in results_stats_dic if key.startswith('p')],
+                [[results_stats_dic[k] for k in results_stats_dic if k.startswith('p')]],
                 [20],
                 False)
+
+
 
     # IF print_incorrect_dogs == True AND there were images incorrectly
     # classified as dogs or vice versa - print out these cases
@@ -83,13 +82,14 @@ def print_results(results_dic, results_stats_dic, model,
             ((results_stats_dic['n_correct_dogs'] + results_stats_dic['n_correct_notdogs'])
              != results_stats_dic['n_images'])
             ):
-        # Printing a table of the results_dic dictionary for the images that are incorrectly classified as
-        # dogs or not dogs.
+# Printing a table of the results_dic dictionary for the images that are incorrectly classified as
+# dogs or not dogs.
         print_table(f"INCORRECT Dog/NOT Dog Assignments: 1 is DOG and 0 IS NOT DOG",
-                    ["Image", "Real", "Classified"],
-                    [[results_dic[key][0], results_dic[key][3], results_dic[key][4]] for key in results_dic
-                     if results_dic[key][3] ^ results_dic[key][4]],
-                    [30, 15, 15])
+                    ["Image", "Real","Classified"], 
+                    [ [results_dic[key][0] ,results_dic[key][3], results_dic[key][4] ] for key in results_dic 
+                     if  results_dic[key][3] ^ results_dic[key][4] ],
+                    [30,15,15])
+            
 
     # IF print_incorrect_breed == True AND there were dogs whose breeds
     # were incorrectly classified - print out these cases
@@ -102,63 +102,55 @@ def print_results(results_dic, results_stats_dic, model,
             results_stats_dic['n_correct_breed']
 
         print_table(f"INCORRECT Dog Breed : {n_incorrect_breed}",
-                    ["Real", "Classifier"],
-                    [[results_dic[key][0], results_dic[key][1]] for key in results_dic
+                    ["Real", "Classifier"], 
+                    [[results_dic[key][0], results_dic[key][1]] for key in results_dic 
                      if sum(results_dic[key][3:]) == 2 and results_dic[key][2] == 0],
                     [26, 30])
 
+def print_table(main_header:str,header2: list[str] , data: list[list],col_width:list[int],row_number:bool=True):
+        """
+        It takes a main header, a list of headers, a table of data, a list of column widths, and a
+        boolean for whether or not to print row numbers
+        
+        :param main_header: The title of the table
+        :type main_header: str
+        :param header2: list[str] - The header of the table
+        :type header2: list[str]
+        :param data: list[list]
+        :type data: list[list]
+        :param col_width: list of ints, the width of each column
+        :type col_width: list[int]
+        :param row_number: bool, defaults to True
+        :type row_number: bool (optional)
+        """
+        if len(col_width)<len(data[0]):
+                col_width=[col_width[0]]*len(data[0])
+        else:
+                col_width=col_width[:len(data[0])]
+        if row_number:
+                print("\n+-----+"+"+".join( "-" * x for x in  col_width)+"+")
+                
+                print("|{0:^{1:d}}|".format(main_header,sum(col_width)+len(col_width)+5 ), end="\n")
+                
+                print("| #   |"+"|".join("{0:<{1:d}}".format(" "+item,size) for item,size in zip(header2,col_width) ) + "|")
 
-def print_table(main_header: str, header2: list[str], data: list[list], col_width: list[int], row_number: bool = True):
-    """
-    It takes a main header, a list of headers, a table of data, a list of column widths, and a
-    boolean for whether or not to print row numbers
+                print("+=====+"+"+".join( "=" * x for x in  col_width)+"+")
+                i=1
+                for row in data:
+                        print("| {:<4d}|".format(i)+"|".join("{0:<{1:d}s}".format(" "+item,size) for item,size in zip(list(map(str, row)),col_width) ) + "|")
+                        i+=1
+                print("+=====+"+"+".join( "=" * x for x in  col_width)+"+")                
+        else:
+                print("\n+"+"+".join( "-" * x for x in  col_width)+"+")
+                
+                print("|{0:^{1:d}}|".format(main_header,sum(col_width)+len(col_width)-1), end="\n")
+                
+                print("|"+"|".join("{0:<{1:d}}".format(" "+item,size) for item,size in zip(header2,col_width) ) + "|")
 
-    :param main_header: The title of the table
-    :type main_header: str
-    :param header2: list[str] - The header of the table
-    :type header2: list[str]
-    :param data: list[list]
-    :type data: list[list]
-    :param col_width: list of ints, the width of each column
-    :type col_width: list[int]
-    :param row_number: bool, defaults to True
-    :type row_number: bool (optional)
-    """
-    if len(col_width) < len(data[0]):
-        col_width = [col_width[0]]*len(data[0])
-    else:
-        col_width = col_width[:len(data[0])]
-    if row_number:
-        print("\n+-----+"+"+".join("-" * x for x in col_width)+"+")
-
-        print("|{0:^{1:d}}|".format(main_header, sum(
-            col_width)+len(col_width)+5), end="\n")
-
-        print("| #   |"+"|".join("{0:<{1:d}}".format(" "+item, size)
-              for item, size in zip(header2, col_width)) + "|")
-
-        print("+=====+"+"+".join("=" * x for x in col_width)+"+")
-        i = 1
-        for row in data:
-            print("| {:<4d}|".format(i)+"|".join("{0:<{1:d}s}".format(" "+item, size)
-                  for item, size in zip(list(map(str, row)), col_width)) + "|")
-            i += 1
-        print("+=====+"+"+".join("=" * x for x in col_width)+"+")
-    else:
-        print("\n+"+"+".join("-" * x for x in col_width)+"+")
-
-        print("|{0:^{1:d}}|".format(main_header, sum(
-            col_width)+len(col_width)-1), end="\n")
-
-        print("|"+"|".join("{0:<{1:d}}".format(" "+item, size)
-              for item, size in zip(header2, col_width)) + "|")
-
-        print("+"+"+".join("=" * x for x in col_width)+"+")
-        for row in data:
-            print("|"+"|".join("{0:<{1:d}s}".format(" "+item, size)
-                  for item, size in zip(list(map(str, row)), col_width)) + "|")
-        print("+"+"+".join("=" * x for x in col_width)+"+")
+                print("+"+"+".join( "=" * x for x in  col_width)+"+")
+                for row in data:
+                        print("|"+"|".join("{0:<{1:d}s}".format(" "+item,size) for item,size in zip(list(map(str, row)),col_width) ) + "|")
+                print("+"+"+".join( "=" * x for x in  col_width)+"+")
 
 
-# print_table("Hello world", ["name", "score"], [
-#             ["A", 2], ["bob", 23], ["Yamin", 34]], [10, 10])
+# print_table("Hello world",["name","score"],[["A",2],["bob",23],["Yamin",34]],[10,10])
