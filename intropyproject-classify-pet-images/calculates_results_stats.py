@@ -75,6 +75,8 @@ def calculates_results_stats(results_dic):
     """
     # Creates empty dictionary for results_stats_dic
     results_stats_dic = defaultdict()
+# Creating a dictionary with the key as the name of the statistic and the count as the statistic's
+# value.
 
     results_stats_dic['n_dogs_img'] = sum(
         results_dic[k][3] == 1 for k in results_dic)
@@ -90,6 +92,7 @@ def calculates_results_stats(results_dic):
     results_stats_dic['n_notdogs_img'] = (
         results_stats_dic['n_images'] - results_stats_dic['n_dogs_img'])
 
+# A ternary operator. It is a shorthand for an if-else statement to handle DividByZero exceptions
     results_stats_dic['pct_match'] = results_stats_dic['n_images'] and (
         results_stats_dic['n_match']/results_stats_dic['n_images'])*100.0 or 0
     results_stats_dic['pct_correct_dogs'] = results_stats_dic['n_dogs_img'] and (

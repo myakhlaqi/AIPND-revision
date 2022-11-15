@@ -18,12 +18,6 @@
 # Imports python modules
 import argparse
 
-# TODO 1: EDIT and ADD code BELOW to do the following that's stated in the 
-#       comments below that start with "TODO: 1" for the get_input_args function
-#       Please be certain to replace None in the return statement with 
-#       parser.parse_args() parsed argument collection that you created with 
-#       this function
-# 
 def get_input_args():
     """
     Retrieves and parses the 3 command line arguments provided by the user when
@@ -44,17 +38,18 @@ def get_input_args():
     # Creates parse 
     parser = argparse.ArgumentParser()
 
-    # Creates 3 command line arguments args.dir for path to images files,
-    # args.arch which CNN model to use for classification, args.labels path to
-    # text file with names of dogs.
+# This code is adding an argument to the parser. The argument is called dir and it is a string.
+# The default value is pet_images/. The help is the path to the folder of images.
     parser.add_argument('--dir', type=str, default='pet_images/', 
                         help='path to folder of images')
-    # TODO: 1a. EDIT parse.add_argument statements BELOW to add type & help for:
-    #          --arch - the CNN model architecture
-    #          --dogfile - text file of names of dog breeds
-    parser.add_argument('--arch', default = 'vgg' )
-    parser.add_argument('--dogfile', default = 'dognames.txt' )
+# This is adding an argument to the parser. The argument is called arch and it is a string.
+# The default value is vgg. The help is the CNN Model Architecture as --arch with default value 'vgg'
+    parser.add_argument('--arch', default = 'vgg', 
+                        help='CNN Model Architecture as --arch with default value \'vgg\' ' )
+# This is adding an argument to the parser. The argument is called dogfile and it is a string.
+# The default value is dognames.txt. The help is the Text File with Dog Names as --dogfile with
+# default value 'dognames.txt'
+    parser.add_argument('--dogfile', default = 'dognames.txt',
+                        help='Text File with Dog Names as --dogfile with default value \'dognames.txt\'')
 
-    # TODO: 1b. Replace None with parser.parse_args() parsed argument 
-    # collection that you created with this function 
-    return None
+    return parser.parse_args()

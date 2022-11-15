@@ -67,20 +67,21 @@ def adjust_results4_isadog(results_dic, dogfile):
     Returns:
            None - results_dic is mutable data type so no return needed.
     """
+
+    # Creating an empty set to keep dog names from dogfile.txt for fast lookup.
     dognames = set()
     with open(dogfile, 'r') as f:
         data = f.readlines()
+    # Reading the dognames.txt file and adding each line to the set dognames.
     dognames.update(map(str.rstrip, data))
-    
+
+    # Iterating over the keys of the dictionary.
     for key in results_dic:
-      results_dic[key].extend([0,0])
-      if results_dic[key][0] in dognames:
-        results_dic[key][3] = 1
-      if results_dic[key][1] in dognames:
-        results_dic[key][4] = 1
-        # for word in results_dic[key][1].split(','):
-        #     if word in dognames:
-        #         results_dic[key][4] = 1
-        #         break
+        # Adding two more elements to the list of each key in the dictionary.
+        results_dic[key].extend([0, 0])
+        if results_dic[key][0] in dognames:
+            results_dic[key][3] = 1
+        if results_dic[key][1] in dognames:
+            results_dic[key][4] = 1
 
     None
